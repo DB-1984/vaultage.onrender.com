@@ -1,0 +1,149 @@
+// ===============================
+// Prisma Client Generator
+// ===============================
+// This tells Prisma to generate a JS client
+// so we can use prisma.user.create() etc in Node.
+
+// Prisma uses the scalar field definitions to generate
+// actual database columns during migration.
+//
+// Prisma uses the relation definitions to:
+//
+// 1) Generate foreign key constraints in the database
+// 2) Understand how tables are connected
+// 3) Generate the correct SQL (including JOINs)
+//    when you query using include/connect/etc.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ===============================
+// Database Connection
+// ===============================
+// Defines which database we use
+// and where the connection string comes from.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // comes from your .env file
+}
+
+// ===============================
+// USER MODEL
+// ===============================
+// Equivalent to a Mongoose schema.
+// This creates a real SQL table called "User".
+
+model User {
+  // Primary key
+  // cuid() auto-generates a unique string ID
+  id String @id @default(cuid())
+
+  // Email must be unique across all users
+  email String @unique
+
+  // Store hashed password (never plain text)
+  passwordHash String
+
+  // Automatically set when record is created
+  createdAt DateTime @default(now())
+
+  // One user can have many folders
+  folders Folder[]
+
+  // One user can have many files
+  files File[]
+}
+
+// ===============================
+// FOLDER MODEL
+// ===============================
+// Allows folder nesting (folders inside folders)
+
+model Folder {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Folder display name
+  name String
+
+  // Foreign key linking folder to a User
+  ownerId String
+
+  // Self-referencing foreign key for nesting
+  // If null → this is a root folder
+  parentId String?
+
+  // Auto timestamp
+  createdAt DateTime @default(now())
+
+  // RELATION FIELDS
+  // Relation: folder belongs to a user
+  // If user is deleted → delete folders too
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Self relation for nesting
+  // parent folder
+  // represents the Folder row whose id equals this row’s parentId, so you can call "parent: true" in queries
+  // to retrieve the parent folder - useful for things like 'up a level' nav
+  parent Folder? @relation("FolderTree", fields: [parentId], references: [id], onDelete: Cascade)
+
+  // child folders inside this folder
+  children Folder[] @relation("FolderTree")
+
+  // A folder can contain many files
+  files File[]
+
+  // Indexes improve query performance
+  @@index([ownerId])
+  @@index([parentId])
+}
+
+// ===============================
+// FILE MODEL
+// ===============================
+// Stores file metadata only.
+// Actual file bytes live in Google Cloud Storage.
+
+model File {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Original filename
+  name String
+
+  // File MIME type (e.g. application/pdf)
+  mimeType String
+
+  // File size in bytes
+  size Int
+
+  // Path/key in Google Cloud Storage
+  // Example:
+  // vaultage/{userId}/{fileId}/document.pdf
+  storageKey String
+
+  // Foreign key linking file to owner
+  // The ownerId field exists to have the User ID populate it
+  ownerId String
+
+  // Optional: file may belong to a folder
+  folderId String?
+
+  // Auto timestamp
+  createdAt DateTime @default(now())
+
+  // RELATION FIELDS
+  // Relation: file belongs to a user
+  // If user deleted → delete file metadata
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Relation: file optionally belongs to folder
+  // If folder deleted → set folderId to null
+  folder Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  // Indexes for performance
+  @@index([ownerId])
+  @@index([folderId])
+}

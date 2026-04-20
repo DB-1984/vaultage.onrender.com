@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vaultage | Terminal</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/src/ui/styles.css" />
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+  <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
+  <script type="module" src="/src/utils/explorer.js"></script>
+
+</head>
+
+<div class="fp-hidden-container">
+  <input type="file" id="main-filepond" name="filepond" multiple>
+</div>
+
+<body class="flex flex-col md:flex-row min-h-screen bg-[#fafafa] text-zinc-900 font-sans antialiased overflow-x-scroll">
+  <div id="login-splash"
+    class="fixed inset-0 z-[200] flex items-center justify-center bg-white/90 transition-all duration-700">
+
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+      style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+    <div class="relative w-full max-w-sm p-10 text-center">
+      <div class="p-4 flex items-center justify-center">
+        <div class="p-5 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div
+              class="w-7 h-7 -mb-0.5 md:w-12 md:h-12 bg-zinc-900 rounded flex items-center justify-center bg-gradient-to-r from-stone-500 to-zinc-950">
+              <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            </div>
+            <h1 class="text-4xl md:text-7xl font-black stroke logo-font tracking-tighter">Vaultage</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-left">
+        <div class="group">
+          <label
+            class="text-[10px] font-black uppercase text-zinc-600 mb-2 block tracking-tight group-focus-within:text-black transition-colors">User:</label>
+          <div class="relative">
+            <input type="text" readonly value="test@example.com"
+              class="w-full bg-zinc-50 border-b-2 border-transparent px-2 py-4 text-xs text-zinc-800 focus:outline-none focus:border-black transition-all cursor-default">
+          </div>
+        </div>
+
+        <div class="group">
+          <label
+            class="text-[10px] font-black uppercase text-zinc-600 mb-2 block tracking-tight group-focus-within:text-black transition-colors">Password:</label>
+          <input type="password" readonly value="••••••••"
+            class="w-full bg-zinc-50 border-b-2 mb-6 border-transparent px-2 py-4 text-xs text-zinc-800 focus:outline-none focus:border-black transition-all cursor-default">
+        </div>
+
+        <button onclick="executeLoginFlow()"
+          class="group w-full bg-[#1d1d1d] text-white font-black py-5 rounded-lg mt-12 transition-all hover:bg-black shadow-2xl flex items-center justify-center gap-3">
+          <span class="tracking-tight text-sm">Login</span>
+          <svg class="group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="18"
+            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mt-12 flex flex-col items-center gap-3 opacity-40 hover:opacity-100 transition-opacity duration-500">
+        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400">Powered By</span>
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" class="w-5 h-5">
+            <g clip-path="url(#a)">
+              <path fill="url(#b)"
+                d="M57.894 98.338c-2.554 3.217-7.734 1.454-7.796-2.654l-.9-60.082h40.4c7.316 0 11.397 8.452 6.847 14.182z" />
+              <path fill="url(#c)" fill-opacity=".2"
+                d="M57.894 98.338c-2.554 3.217-7.734 1.454-7.796-2.654l-.9-60.082h40.4c7.316 0 11.397 8.452 6.847 14.182z" />
+              <path fill="#3ecf8e"
+                d="M41.464 1.66c2.555-3.217 7.735-1.454 7.796 2.654l.395 60.082H9.76c-7.318 0-11.399-8.452-6.848-14.182z" />
+            </g>
+            <defs>
+              <linearGradient id="b" x1="49.198" x2="85.103" y1="48.924" y2="63.982" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#249361" />
+                <stop offset="1" stop-color="#3ecf8e" />
+              </linearGradient>
+              <linearGradient id="c" x1="33.279" x2="49.654" y1="27.128" y2="57.953" gradientUnits="userSpaceOnUse">
+                <stop />
+                <stop offset="1" stop-opacity="0" />
+              </linearGradient>
+              <clipPath id="a">
+                <path fill="#fff" d="M0 0h100v100H0z" />
+              </clipPath>
+            </defs>
+          </svg>
+          <span class="text-sm font-bold tracking-tight text-[#1d1d1d]">Supabase</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <aside
+    class="w-full md:w-64 md:h-screen border-b md:border-b-0 md:border-r border-zinc-200 flex flex-col shrink-0 bg-white md:sticky md:top-0 z-50">
+    <div class="p-5 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div
+          class="w-7 h-7 -mb-0.5 bg-zinc-900 rounded flex items-center justify-center bg-gradient-to-r from-stone-500 to-zinc-950">
+          <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+        </div>
+        <h1 class="text-4xl font-black stroke logo-font tracking-tighter">Vaultage</h1>
+      </div>
+    </div>
+
+    <nav
+      class="flex flex-row md:flex-col px-3 py-4 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar md:flex-grow">
+
+
+      <button onclick="runTest('/folders/content', 'RESOLVE_ROOT')"
+        class="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#1d1d1d"
+          stroke="#1d1d1d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+        </svg>
+        <span class="hidden text-[#1d1d1d] tracking-tighter text-[11px] font-bold md:inline">Home</span>
+      </button>
+
+      <button onclick="triggerUpload()"
+        class="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1d1d1d"
+          stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+        <span class="hidden text-[#1d1d1d] tracking-tighter text-[11px] font-bold md:inline">Upload</span>
+      </button>
+
+      <button onclick="showDoc('docs')"
+        class="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1d1d1d"
+          stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span class="hidden text-[#1d1d1d] tracking-tighter text-[11px] font-bold md:inline">Read Me</span>
+      </button>
+    </nav>
+
+    <div class="hidden md:block p-4 border-t border-zinc-100">
+      <button onclick="logout()"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-all group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d1d1d"
+          stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+          class="group-hover:translate-x-0.5 transition-transform">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        <span class="hidden text-[#1d1d1d] tracking-tighter text-[11px] font-bold md:inline">Logout</span>
+      </button>
+  </aside>
+
+  <main class="flex-grow flex flex-col min-w-0 bg-[#fafafa]">
+    <div class="p-4 md:p-8 space-y-6 bg-white">
+      <div class="rounded-lg shadow-4xl overflow-hidden">
+
+        <p class="text-xs text-black font-mono leading-relaxed">
+          <span class="font-black">VAULTAGE</span> is a white-label alternative to Dropbox/Google Drive,
+          providing secure JWT-based auth in conjunction with S3 handshakes to facilitate the
+          transit of bytes from system to Supabase, whilst never handling a byte on the server.
+        </p>
+      </div>
+    </div>
+    <div class="p-4 md:p-12 space-y-6 bg-gradient-to-r from-stone-500 to-stone-700 min-h-screen">
+      <div class="bg-zinc-950 border border-zinc-900 rounded-lg shadow-2xl overflow-hidden">
+        <div class="px-4 py-2 border-b border-white/5 bg-white/5 flex items-center justify-between">
+          <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.2em]">Terminal</span>
+          <div class="flex gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-zinc-800"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-zinc-800"></div>
+          </div>
+        </div>
+        <pre id="output"
+          class="p-5 font-mono text-[9px] text-zinc-400 h-[125px] overflow-y-auto leading-relaxed uppercase scrollbar-hide select-all">
+// Vaultage Kernel Initialized...
+// Ready for handshake.
+      </pre>
+      </div>
+      <div class="bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden">
+        <div id="breadcrumb-nav"
+          class="px-4 py-3 border-b border-zinc-100 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-zinc-50/50">
+        </div>
+        <div id="explorer-view"
+          class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 min-h-[375px]">
+        </div>
+
+      </div>
+  </main>
+
+  <div id="docs-modal"
+    class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-zinc-950/20 backdrop-blur-md">
+    <div
+      class="bg-white w-full max-w-2xl rounded-xl border border-zinc-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+
+      <div class="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-white">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-zinc-800 rounded-full"></div>
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#1d1d1d]">System Documentation //
+            v1.0</span>
+        </div>
+        <button onclick="closeDocs()" class="text-zinc-400 hover:text-black transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-8 overflow-y-auto space-y-10 custom-scroll">
+
+        <section>
+          <h4 class="text-sm font-black text-[#1d1d1d] uppercase tracking-wider mb-3">01. Operation Modes</h4>
+          <p class="text-zinc-600 text-sm leading-relaxed mb-4">
+            The system's behavior is controlled via the <code
+              class="bg-zinc-100 px-1 rounded text-xs font-bold">VLT_ALLOW_REAL_UPLOADS</code> environment variable.
+          </p>
+          <div class="grid grid-cols-1 gap-3">
+            <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50">
+              <span class="text-[10px] font-black uppercase text-zinc-400 block mb-1">Restricted Mode (Default)</span>
+              <p class="text-xs text-zinc-600">Only the <span class="font-bold text-black">example.txt</span> handshake
+                file is permitted. All other uploads are rejected at the controller level.</p>
+            </div>
+            <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50">
+              <span class="text-[10px] font-black uppercase text-zinc-400 block mb-1">Production Mode</span>
+              <p class="text-xs text-zinc-600">Full binary support is enabled. Users can upload PDFs and standard assets
+                up to a <span class="font-bold text-black">5MB limit</span>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4 class="text-sm font-black text-[#1d1d1d] uppercase tracking-wider mb-3">02. The Test Upload</h4>
+          <p class="text-zinc-600 text-sm leading-relaxed mb-4">
+            To verify the storage pipeline without consuming quota, the system uses a "Canary" file protocol:
+          </p>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-3 text-xs text-zinc-600">
+              <div class="w-1 h-1 bg-zinc-400 rounded-full"></div>
+              <span><strong>Filename:</strong> Must be exactly <code class="text-black">example.txt</code></span>
+            </li>
+            <li class="flex items-center gap-3 text-xs text-zinc-600">
+              <div class="w-1 h-1 bg-zinc-400 rounded-full"></div>
+              <span><strong>File Size:</strong> Must be 0 bytes (empty)</span>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h4 class="text-sm font-black text-[#1d1d1d] uppercase tracking-wider mb-3">03. Cleanup & Deletion</h4>
+          <p class="text-zinc-600 text-sm leading-relaxed">
+            Clicking the <span class="text-red-500 font-bold">✕</span> button triggers a dual-wipe protocol. The system
+            removes the physical binary from Supabase storage and simultaneously drops the metadata record from the
+            PostgreSQL database.
+          </p>
+        </section>
+
+        <section class="pt-6 border-t border-zinc-100">
+          <h4 class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3">Future Scope</h4>
+          <p class="text-xs text-zinc-500 leading-relaxed italic">
+            This Proof of Concept currently utilizes a static directory structure. Production iterations will support
+            dynamic folder creation, recursive file moving, and custom metadata tagging.
+          </p>
+        </section>
+
+      </div>
+
+      <div class="px-8 py-4 bg-zinc-50 border-t border-zinc-100 flex justify-end">
+        <button onclick="closeDocs()"
+          class="bg-zinc-900 text-white text-[10px] font-black uppercase px-6 py-2 rounded-md hover:bg-black transition-all">
+          Acknowledge
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="upload-modal"
+    class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-zinc-950/20 backdrop-blur-sm">
+    <div class="bg-white max-w-sm w-full p-8 rounded-xl border border-zinc-200 shadow-2xl text-center">
+      <h3 class="text-[11px] font-black uppercase tracking-tight mb-2 text-zinc-900">Security Constraint</h3>
+      <p class="text-zinc-500 text-[12px] leading-relaxed mb-6">POC Restriction: Only an empty
+        <strong>example.txt</strong> will bypass current RLS validation.
+      </p>
+      <button onclick="confirmAndUpload()"
+        class="w-full py-3 bg-zinc-900 text-white rounded font-bold text-[10px] uppercase hover:bg-black transition-all shadow-lg">Upload</button>
+      <button onclick="closeModal()" class="w-full mt-4 text-[10px] text-zinc-400 font-bold uppercase">Cancel</button>
+    </div>
+  </div>
+
+</body>
+
+</html>
